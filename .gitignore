@@ -17,3 +17,18 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+gradle/wrapper/gradle-*.zip
+
+# Firebase Credentials
+google-services.json
+GoogleService-Info.plist
+firebase.json
+
+# Keystores and Signing
+*.jks
+*.keystore
+key.properties
+
+# Environment Variables
+.env
+.env.*
