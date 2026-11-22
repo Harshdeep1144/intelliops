@@ -19,6 +19,10 @@ import org.jetbrains.compose.resources.painterResource
 import intelliops.shared.generated.resources.Res
 import intelliops.shared.generated.resources.compose_multiplatform
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import com.harshdeep.intelliops.ui.AuthScreen
 import com.harshdeep.intelliops.ui.MainScreen
 
@@ -28,10 +32,17 @@ fun App() {
     MaterialTheme {
         var isAuthenticated by remember { mutableStateOf(false) }
 
-        if (isAuthenticated) {
-            MainScreen(onLogout = { isAuthenticated = false })
-        } else {
-            AuthScreen(onAuthenticated = { isAuthenticated = true })
+        // Clean light background instead of a harsh gradient
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF4F5F7))
+        ) {
+            if (isAuthenticated) {
+                MainScreen(onLogout = { isAuthenticated = false })
+            } else {
+                AuthScreen(onAuthenticated = { isAuthenticated = true })
+            }
         }
     }
 }
