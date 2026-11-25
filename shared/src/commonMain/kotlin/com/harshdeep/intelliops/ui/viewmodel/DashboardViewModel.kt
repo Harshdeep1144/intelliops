@@ -43,6 +43,12 @@ class DashboardViewModel : ViewModel() {
         }
     }
 
+    fun updateTeamDetails(companyId: String, teamId: String, name: String, description: String) {
+        viewModelScope.launch {
+            repository.updateTeamDetails(companyId, teamId, name, description)
+        }
+    }
+
     fun updateTeamName(companyId: String, teamId: String, newName: String) {
         viewModelScope.launch {
             repository.updateTeamName(companyId, teamId, newName)

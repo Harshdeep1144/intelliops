@@ -2,6 +2,7 @@ package com.harshdeep.intelliops.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.harshdeep.intelliops.data.model.Company
 import com.harshdeep.intelliops.data.model.User
 import com.harshdeep.intelliops.data.repository.IntelliOpsRepository
 import dev.gitlive.firebase.Firebase
@@ -17,22 +18,36 @@ class ProfileViewModel : ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
     val user: StateFlow<User?> = _user.asStateFlow()
 
+    private val _company = MutableStateFlow<Company?>(null)
+    val company: StateFlow<Company?> = _company.asStateFlow()
+
     init {
         loadUser()
     }
 
     fun clearData() {
         _user.value = null
+        _company.value = null
     }
 
     private fun loadUser() {
         viewModelScope.launch {
-            try {
-                // Add a small delay to ensure Firebase initializes first on Web
-                kotlinx.coroutines.delay(100)
-                _user.value = repository.getCurrentUser()
-            } catch (e: Exception) {
-                // Ignore for now
+            var attempts = 0
+            while (attempts < 15 && _user.value == null) {
+                try {
+                    kotlinx.coroutines.delay(200)
+                    val u = repository.getCurrentUser()
+                    if (u != null) {
+                        _user.value = u
+                        if (u.companyId.isNotEmpty()) {
+                            _company.value = repository.getCompany(u.companyId)
+                        }
+                        break
+                    }
+                } catch (e: Exception) {
+                    // Ignore and retry
+                }
+                attempts++
             }
         }
     }

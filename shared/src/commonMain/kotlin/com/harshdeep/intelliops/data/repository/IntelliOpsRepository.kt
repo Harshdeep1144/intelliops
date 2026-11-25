@@ -23,6 +23,15 @@ class IntelliOpsRepository {
         return if (userDoc.exists) userDoc.data() else null
     }
 
+    suspend fun getCompany(companyId: String): Company? {
+        return try {
+            val doc = firestore.collection("companies").document(companyId).get()
+            if (doc.exists) doc.data<Company>() else null
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     suspend fun createCompany(company: Company, adminUser: User): Result<Unit> {
         return try {
             val updatedUser = adminUser.copy(companyId = company.id, companyName = company.name)
@@ -166,7 +175,7 @@ class IntelliOpsRepository {
             )
     }
 
-    suspend fun updateTaskDetails(companyId: String, taskId: String, title: String, description: String, assigneeIds: List<String> = emptyList(), assigneeId: String? = null) {
+    suspend fun updateTaskDetails(companyId: String, taskId: String, title: String, description: String, assigneeIds: List<String> = emptyList(), priority: com.harshdeep.intelliops.data.model.Priority = com.harshdeep.intelliops.data.model.Priority.MID, assigneeId: String? = null) {
         firestore.collection("companies")
             .document(companyId)
             .collection("tasks")
@@ -176,8 +185,20 @@ class IntelliOpsRepository {
                     "title" to title, 
                     "description" to description, 
                     "assigneeIds" to assigneeIds,
+                    "priority" to priority,
                     "assigneeId" to (assigneeId ?: assigneeIds.firstOrNull())
                 ),
+                merge = true
+            )
+    }
+
+    suspend fun updateTeamDetails(companyId: String, teamId: String, name: String, description: String) {
+        firestore.collection("companies")
+            .document(companyId)
+            .collection("teams")
+            .document(teamId)
+            .set(
+                mapOf("name" to name, "description" to description),
                 merge = true
             )
     }

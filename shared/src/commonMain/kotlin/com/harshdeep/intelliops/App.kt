@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.Box
 import com.harshdeep.intelliops.ui.AuthScreen
 import com.harshdeep.intelliops.ui.MainScreen
 
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
+
 // Add this interface to allow passing Firebase initialization status
 interface AppEnvironment {
     val isFirebaseInitialized: Boolean
@@ -31,7 +34,14 @@ object DefaultAppEnvironment : AppEnvironment {
 @Composable
 fun App(environment: AppEnvironment = DefaultAppEnvironment) {
     MaterialTheme {
-        var isAuthenticated by remember { mutableStateOf(false) }
+        val initialAuth = remember {
+            try {
+                Firebase.auth.currentUser != null
+            } catch (e: Exception) {
+                false
+            }
+        }
+        var isAuthenticated by remember { mutableStateOf(initialAuth) }
 
         // Clean light background instead of a harsh gradient
         Box(

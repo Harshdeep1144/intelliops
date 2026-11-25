@@ -38,6 +38,7 @@ fun MainScreen(
 
     Scaffold(
         containerColor = Color.Transparent, // Let the app background show through
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             Row(
                 modifier = Modifier
@@ -107,7 +108,11 @@ fun MainScreen(
             }
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = paddingValues.calculateBottomPadding())
+        ) {
             when (selectedTab) {
                 0 -> DashboardScreen(currentUser = user)
                 1 -> TasksScreen(currentUser = user)

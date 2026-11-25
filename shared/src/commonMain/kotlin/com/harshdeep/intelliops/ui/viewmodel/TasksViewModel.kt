@@ -43,10 +43,10 @@ class TasksViewModel : ViewModel() {
         title: String, 
         description: String, 
         assigneeIds: List<String> = emptyList(), 
-        createdBy: String, 
+        createdBy: String = "", 
         teamId: String?, 
         priority: com.harshdeep.intelliops.data.model.Priority, 
-        parentTaskId: String?
+        parentTaskId: String? = null
     ) {
         viewModelScope.launch {
             val task = Task(
@@ -77,7 +77,8 @@ class TasksViewModel : ViewModel() {
         taskId: String, 
         title: String, 
         description: String, 
-        assigneeIds: List<String> = emptyList()
+        assigneeIds: List<String> = emptyList(),
+        priority: com.harshdeep.intelliops.data.model.Priority = com.harshdeep.intelliops.data.model.Priority.MID
     ) {
         viewModelScope.launch {
             repository.updateTaskDetails(
@@ -86,6 +87,7 @@ class TasksViewModel : ViewModel() {
                 title = title, 
                 description = description, 
                 assigneeIds = assigneeIds,
+                priority = priority,
                 assigneeId = assigneeIds.firstOrNull()
             )
         }
