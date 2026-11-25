@@ -62,6 +62,17 @@ kotlin {
             implementation(libs.gitlive.firebase.firestore)
             implementation(libs.navigation.compose)
             implementation(libs.kotlinx.serialization.json)
+            implementation("io.ktor:ktor-client-core:2.3.12")
+            implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
+        }
+        androidMain.dependencies {
+            implementation(libs.compose.uiToolingPreview)
+            implementation(libs.compose.uiTooling)
+            implementation("io.ktor:ktor-client-okhttp:2.3.12")
+        }
+        iosMain.dependencies {
+            implementation("io.ktor:ktor-client-darwin:2.3.12")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
