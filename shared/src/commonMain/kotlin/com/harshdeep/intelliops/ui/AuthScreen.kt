@@ -15,6 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.harshdeep.intelliops.ui.viewmodel.AuthViewModel
+import com.harshdeep.intelliops.ui.viewmodel.AuthState
 import com.harshdeep.intelliops.ui.theme.glassmorphism
 
 @Composable
@@ -53,6 +55,7 @@ fun AuthScreen(
     }
     
     LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(100) // Small delay to let Firebase init on Web
         viewModel.checkUser()
     }
 

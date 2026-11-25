@@ -15,6 +15,8 @@ kotlin {
             implementation(project(":shared"))
 
             implementation(libs.compose.ui)
+            implementation(libs.gitlive.firebase.auth)
+            implementation(libs.gitlive.firebase.firestore)
         }
     }
 }

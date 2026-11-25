@@ -1,4 +1,4 @@
-package com.harshdeep.intelliops.ui
+package com.harshdeep.intelliops.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,16 +15,21 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel : ViewModel() {
     private val repository = IntelliOpsRepository()
-    private val auth = Firebase.auth
+    private val auth get() = Firebase.auth
     
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
     fun checkUser() {
-        if (auth.currentUser != null) {
-            _authState.value = AuthState.Authenticated
-        } else {
-            _authState.value = AuthState.Idle
+        try {
+            if (auth.currentUser != null) {
+                _authState.value = AuthState.Authenticated
+            } else {
+                _authState.value = AuthState.Idle
+            }
+        } catch (e: Exception) {
+            // Ignore Firebase initialization errors if they happen before initialization completes
+            println("Auth check skipped: ${e.message}")
         }
     }
 
@@ -36,6 +41,9 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             try {
+                if (auth.currentUser != null) {
+                    auth.signOut()
+                }
                 val result = auth.createUserWithEmailAndPassword(email, pass)
                 val user = User(
                     id = result.user?.uid ?: "",
@@ -63,6 +71,9 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             try {
+                if (auth.currentUser != null) {
+                    auth.signOut()
+                }
                 val result = auth.createUserWithEmailAndPassword(email, pass)
                 val user = User(
                     id = result.user?.uid ?: "",
@@ -87,6 +98,10 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             try {
+                // Ensure we sign out first to clear any stale cache in GitLive SDK
+                if (auth.currentUser != null) {
+                    auth.signOut()
+                }
                 auth.signInWithEmailAndPassword(email, pass)
                 _authState.value = AuthState.Authenticated
             } catch (e: Exception) {

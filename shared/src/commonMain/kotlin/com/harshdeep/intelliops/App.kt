@@ -18,8 +18,18 @@ import androidx.compose.foundation.layout.Box
 import com.harshdeep.intelliops.ui.AuthScreen
 import com.harshdeep.intelliops.ui.MainScreen
 
+// Add this interface to allow passing Firebase initialization status
+interface AppEnvironment {
+    val isFirebaseInitialized: Boolean
+}
+
+// A default implementation for Android/iOS where it's always true
+object DefaultAppEnvironment : AppEnvironment {
+    override val isFirebaseInitialized: Boolean = true
+}
+
 @Composable
-fun App() {
+fun App(environment: AppEnvironment = DefaultAppEnvironment) {
     MaterialTheme {
         var isAuthenticated by remember { mutableStateOf(false) }
 
@@ -29,7 +39,11 @@ fun App() {
                 .fillMaxSize()
                 .background(Color(0xFFF4F5F7))
         ) {
-            if (isAuthenticated) {
+            if (!environment.isFirebaseInitialized) {
+                androidx.compose.material3.CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            } else if (isAuthenticated) {
                 MainScreen(onLogout = { isAuthenticated = false })
             } else {
                 AuthScreen(onAuthenticated = { isAuthenticated = true })

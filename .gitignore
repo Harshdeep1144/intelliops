@@ -32,3 +32,4 @@ key.properties
 # Environment Variables
 .env
 .env.*
+webApp/src/webMain/kotlin/com/harshdeep/intelliops/config/FirebaseConfig.kt

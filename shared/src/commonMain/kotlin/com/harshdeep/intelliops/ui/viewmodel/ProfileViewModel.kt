@@ -1,4 +1,4 @@
-package com.harshdeep.intelliops.ui
+package com.harshdeep.intelliops.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,9 +21,15 @@ class ProfileViewModel : ViewModel() {
         loadUser()
     }
 
+    fun clearData() {
+        _user.value = null
+    }
+
     private fun loadUser() {
         viewModelScope.launch {
             try {
+                // Add a small delay to ensure Firebase initializes first on Web
+                kotlinx.coroutines.delay(100)
                 _user.value = repository.getCurrentUser()
             } catch (e: Exception) {
                 // Ignore for now
