@@ -2,6 +2,7 @@ package com.harshdeep.intelliops.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.harshdeep.intelliops.data.model.Task
 import com.harshdeep.intelliops.data.model.Team
 import com.harshdeep.intelliops.data.model.User
 import com.harshdeep.intelliops.data.repository.IntelliOpsRepository
@@ -19,9 +20,13 @@ class DashboardViewModel : ViewModel() {
     private val _users = MutableStateFlow<List<User>>(emptyList())
     val users: StateFlow<List<User>> = _users.asStateFlow()
 
+    private val _tasks = MutableStateFlow<List<Task>>(emptyList())
+    val tasks: StateFlow<List<Task>> = _tasks.asStateFlow()
+
     fun clearData() {
         _teams.value = emptyList()
         _users.value = emptyList()
+        _tasks.value = emptyList()
     }
 
     fun loadCompanyData(companyId: String) {
@@ -33,6 +38,11 @@ class DashboardViewModel : ViewModel() {
         viewModelScope.launch {
             repository.getCompanyUsers(companyId).collect {
                 _users.value = it
+            }
+        }
+        viewModelScope.launch {
+            repository.getTasks(companyId).collect {
+                _tasks.value = it
             }
         }
     }
