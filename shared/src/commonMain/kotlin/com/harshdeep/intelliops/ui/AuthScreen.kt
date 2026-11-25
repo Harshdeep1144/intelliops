@@ -47,6 +47,7 @@ fun AuthScreen(
 
     LaunchedEffect(authState) {
         if (authState is AuthState.Authenticated) {
+            viewModel.resetState()
             onAuthenticated()
         }
     }

@@ -23,7 +23,13 @@ class AuthViewModel : ViewModel() {
     fun checkUser() {
         if (auth.currentUser != null) {
             _authState.value = AuthState.Authenticated
+        } else {
+            _authState.value = AuthState.Idle
         }
+    }
+
+    fun resetState() {
+        _authState.value = AuthState.Idle
     }
 
     fun signUpAdmin(email: String, pass: String, name: String, companyName: String) {

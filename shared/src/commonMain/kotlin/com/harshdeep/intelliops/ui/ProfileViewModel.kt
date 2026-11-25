@@ -37,7 +37,8 @@ class ProfileViewModel : ViewModel() {
                 Firebase.auth.signOut()
                 onLogoutSuccess()
             } catch (e: Exception) {
-                // Ignore for now
+                // In a real app, handle error properly
+                onLogoutSuccess() // Fallback to allow UI to proceed even if network fails
             }
         }
     }

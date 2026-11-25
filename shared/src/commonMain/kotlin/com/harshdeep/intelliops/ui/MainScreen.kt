@@ -162,7 +162,11 @@ fun ProfileScreen(onLogout: () -> Unit) {
         Spacer(modifier = Modifier.height(48.dp))
         
         Button(
-            onClick = { viewModel.logout(onLogout) },
+            onClick = {
+                viewModel.logout {
+                    onLogout()
+                }
+            },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5630)), // Red for logout
             modifier = Modifier.fillMaxWidth(0.8f).height(50.dp)
         ) {
