@@ -1,6 +1,7 @@
 package com.harshdeep.intelliops.ui
 
 import com.harshdeep.intelliops.PlatformBackHandler
+import com.harshdeep.intelliops.data.remote.EmailNotificationService
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,6 +34,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -577,6 +579,8 @@ fun ProjectBoardScreen(
     var editTeamName by remember { mutableStateOf(team.name) }
     var editTeamDesc by remember { mutableStateOf(team.description) }
 
+    val coroutineScope = rememberCoroutineScope()
+
     val projectKey = getProjectKey(team.name)
     val completedCount = teamTasks.count { it.status == TaskStatus.COMPLETED }
     val totalCount = teamTasks.size
@@ -880,6 +884,20 @@ fun ProjectBoardScreen(
                     priority,
                     null
                 )
+                val assignedUsers = teamMembers.filter { assignees.contains(it.id) }
+                println("TasksScreen: Triggering notifications for ${assignedUsers.size} assignees. Emails: ${assignedUsers.map { it.email }}")
+                coroutineScope.launch {
+                    assignedUsers.forEach { member ->
+                        EmailNotificationService.notifyNewIssue(
+                            recipientEmail = member.email,
+                            assigneeName = member.name,
+                            teamName = team.name,
+                            title = title,
+                            description = desc,
+                            priority = priority.name
+                        )
+                    }
+                }
                 showCreateTaskSheet = false
             }
         )
@@ -943,7 +961,18 @@ fun ProjectBoardScreen(
                                     }
                                 }
                                 Button(
-                                    onClick = { dashboardViewModel.assignUserToTeam(currentUser.companyId, u.id, team.id) },
+                                    onClick = { 
+                                        dashboardViewModel.assignUserToTeam(currentUser.companyId, u.id, team.id)
+                                        println("TasksScreen: Triggering team add notification for member ${u.name} at ${u.email}")
+                                        coroutineScope.launch {
+                                            EmailNotificationService.notifyAddedToTeam(
+                                                recipientEmail = u.email,
+                                                memberName = u.name,
+                                                teamName = team.name,
+                                                companyName = currentUser.companyName.ifEmpty { "IntelliOps" }
+                                            )
+                                        }
+                                    },
                                     colors = ButtonDefaults.buttonColors(containerColor = BoardPalette.PrimaryBlue),
                                     shape = RoundedCornerShape(6.dp),
                                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
